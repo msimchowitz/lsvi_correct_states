@@ -1,0 +1,82 @@
+%!TEX root = main.tex
+
+\section{Writing}
+\newcommand{\Vbar}{\bar{V}}
+\newcommand{\Qbar}{\bar{Q}}
+\newcommand{\Pbar}{\bar{P}}
+
+\newcommand{\blead}{\mathbf{B}^{\mathrm{lead}}}
+\newcommand{\bcross}{\mathbf{B}^{\mathrm{cross}}}
+
+\newcommand{\Vtil}{\tilde{V}}
+\newcommand{\Qtil}{\tilde{Q}}
+\newcommand{\Rtil}{\tilde{R}}
+
+\newcommand{\Vhat}{\widehat{V}}
+\newcommand{\Qhat}{\widehat{Q}}
+\newcommand{\Phat}{\widehat{P}}
+\newcommand{\Rhat}{\widehat{R}}
+
+\newcommand{\Ehat}{\widehat{\Exp}}
+
+\begin{align*}
+\Vbar_0^{\pi} - \Vhat^{\pi} &=\Exp\left[\sum_h \sum_{z} w(h,z)\right] 
+\end{align*}
+
+\begin{align*}
+\Vbar_0^{\pi} - V^\pi &= \Exp\left[\sum_{h=1}^H\sum_{z = (s,\pi_h(s))}  \Rhat(h,z) - R(h,z) +  \langle \Phat(h,z) - P(h,z), \Vbar^{\pi}_{h+1}\rangle \right]\\
+&= \underbrace{\Exp\left[\sum_{h=1}^H\sum_{z = (s,\pi_h(s))}  \Rhat(h,z) - R(h,z) + \langle \Phat(h,z) - P(h,z),  V^{\pi}_{h+1}\rangle \right]}_{(i)}\\
+&\qquad+ \underbrace{\Exp\left[\sum_{h=1}^H\sum_{z = (s,\pi_h(s))}  \langle \Phat(h,z) - P(h,z), \Vhat^{\pi}_{h+1} - V^{\pi}_{h+1}\rangle \right]}_{(ii)}\\
+&\qquad+ \underbrace{\Exp\left[\sum_{h=1}^H\sum_{z = (s,\pi_h(s))} w(h,z) + \langle \Phat(h,z) - P(h,z), \Vbar^{\pi}_{h+1} - \Vhat^{\pi}_{h+1}\rangle \right]}_{(iii)}\\
+\end{align*}
+\begin{lemma}
+\begin{align*}
+&\text{\normalfont (Term $(i)$)} \le \mathrm{poly}(H)\cdot\Exp\left[\sum_{h=1}^H\sum_{z = (s,\pi_h(s))} \blead(h,z) \right].
+\end{align*}
+\end{lemma}
+\begin{lemma}
+\begin{align*}
+&\text{\normalfont (Term $(ii)$)} \le \mathrm{poly}(H)\cdot\Exp\left[\sum_{h=1}^H\sum_{z = (s,\pi_h(s))} \bcross(h,z) \right].
+\end{align*}
+\end{lemma}
+
+
+\subsection{Term $(i)$}
+
+
+\subsection{Term $(ii)$ }
+\begin{lemma} Define 
+\begin{align*}
+\Rtil(h,s,a) &= R(h,s,a) + |\Qhat^{\pi}(h,s,a) - Q^{\pi}(h,s,a)|\\
+\Qtil(h,s,a) &= \Rtil(h,s,a) + P(h,s,a)^\top \Vtil(h+1,\cdot)  \\
+\Vtil(h,s) &= \Qtil(h,s,\pi_h(s))
+\end{align*}
+Then, 
+\begin{align*}
+\Exp\left[\sum_{h=1}^H\sum_{z = (s,\pi_h(s))} \langle \Phat(h,z) - P(h,z), \Vhat^{\pi}_{h+1} - V^{\pi}_{h+1}\rangle \right] \le \Exp\left[\sum_{h=1}^H\sum_{z = (s,\pi_h(s))} \langle |\Phat(h,z) - P(h,z)|, \Vtil^{\pi}_{h+1} - V^{\pi}_{h+1}\rangle \right].
+\end{align*}
+\end{lemma}
+\begin{proof}
+We have that
+\begin{align*}
+\Vtil^{\pi}_{h+1} - V^{\pi}_{h+1}  &= \Rtil(h,s,\pi_h(s)) - R(h,s,\pi_h(s)) + \underbrace{P(h,s,\pi_h(s))^\top (\Vtil^{\pi}(h+1,\cdot) - V^{\pi}(h+1,\cdot))}_{\ge 0}\\
+&\ge \Rtil(h,s,\pi_h(s)) - R(h,s,\pi_h(s))\\
+&= |\Qhat^{\pi}(h,s,\pi_h(s)) - Q^{\pi}(h,s,\pi_h(s))|\\
+&= |\Vhat^{\pi}(h,s) - V^{\pi}(h,s)|.
+\end{align*}
+Therefore,
+\begin{align*}
+&\Exp\left[\sum_{h=1}^H\sum_{z = (s,\pi_h(s))} \langle \Phat(h,z) - P(h,z), \Vhat^{\pi}_{h+1} - V^{\pi}_{h+1}\rangle \right] \\
+&\le \Exp\left[\sum_{h=1}^H\sum_{z = (s,\pi_h(s))} \langle |\Phat(h,z) - P(h,z)|, |\Vhat^{\pi}_{h+1} - V^{\pi}_{h+1}|\rangle \right]\\
+&\le \Exp\left[\sum_{h=1}^H\sum_{z = (s,\pi_h(s))} \langle |\Phat(h,z) - P(h,z)|, \Vtil^{\pi}_{h+1} - V^{\pi}_{h+1}\rangle \right]
+\end{align*}
+\end{proof}
+
+\begin{lemma} On good event,
+\begin{align*}
+ \langle |\Phat(h,z) - P(h,z)|, \Vtil^{\pi}_{h+1} - V^{\pi}_{h+1}\rangle \le \frac{1}{H} P(h,z)^\top (+ \bcross(h,z) + 
+\end{align*}
+\end{lemma}
+
+
+

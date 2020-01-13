@@ -1,0 +1,377 @@
+%!TEX root = main.tex
+
+\section{Exploration Lower Bound}
+\newcommand{\tv}{\mathrm{TV}}
+\newcommand{\KL}{\mathrm{KL}}
+\newcommand{\Binf}{\mathcal{B}_{\infty}}
+\newcommand{\unifsim}{\overset{\mathrm{unif}}{\sim}}
+\newcommand{\Algest}{\Alg_{\mathrm{est}}}
+\newcommand{\Jhat}{\widehat{J}}
+\newcommand{\jhat}{\widehat{j}}
+\newcommand{\calY}{\mathcal{Y}}
+\newcommand{\vecone}{\mathbf{1}}
+\newcommand{\calK}{\mathcal{K}}
+\newcommand{\BigOh}[1]{\mathcal{O}\left(#1\right)}
+\newcommand{\pist}{\pi^{\star}}
+\newcommand{\I}{\mathbf{1}}
+\newcommand{\calD}{\mathcal{D}}
+\renewcommand{\lnot}{\ell_0}
+\newcommand{\lmax}{\ell_{\max}}
+
+\newcommand{\calT}{\mathcal{T}}
+\newcommand{\Mclass}{\mathscr{M}}
+\newcommand{\Pclass}{\mathscr{P}}
+\newcommand{\Phard}{\Pclass_{\mathrm{hard}}}
+\newcommand{\Rhard}{\Rclass_{\mathrm{hard}}}
+\newcommand{\Ehard}{\Envir_{\mathrm{hard}}}
+
+\newcommand{\Pembed}{\Pclass_{\mathrm{embd}}}
+\newcommand{\Rembed}{\Rclass_{\mathrm{embed}}}
+\newcommand{\Eembed}{\Envir_{\mathrm{embed}}}
+
+\newcommand{\Rclass}{\mathscr{R}}
+
+\newcommand{\Alg}{\mathsf{Alg}}
+\newcommand{\Envir}{\mathscr{E}}
+\newcommand{\calP}{\mathcal{P}}
+\newcommand{\mdp}{\mathsf{mdp}}
+\newcommand{\pihat}{\widehat{\pi}}
+
+\maxs{Lower Bound holds even if algorithm returns history dependent or randomized policies. Using history dependendent/randomized policies is also necessary to deal with the construction which gets the H dependence}
+\begin{definition}[Reward-free MDP] An enviroment is a tripled $(\calX,A,H)$, with state space $\calX$, actions $A$, and horizon $H$. A reward free MDP $\calP$ is a tuple.. . . Given a reward vector $r \in [0,1]^{S \times A}$ and reward-free MDP $\calP$, we let $\calM = \mdp(\calP,r)$ denote 
+\end{definition}
+
+
+\begin{definition} We say that an algorithm $\Alg$ $(\epsilon,\delta)$-explores a transition class $\Pclass$ and a reward class $\Rclass \subset [0,1]^{S \times A}$ if for all $\calP \in \Pclass$, $\Alg$ collects a possibly random number of trajectories $K$ from $\calP$, and, when queried with an abitrary number of reward vectors $r \in \Rclass$, returns policies $\pihat_r$ which all satisfy
+\begin{align*}
+\max_{\pi} V^{\calM_r, \pi} - V^{\calM_r,\pihat_r} \le \epsilon, \quad \text{where } \calM_r = \mdp(\calP,r).
+\end{align*}
+\end{definition}
+
+\begin{theorem}\label{thm:main_lb} For $\epsilon \le c_0/H$, $A \ge 2$, $S \gtrsim \log_2 A$ and $H \gtrsim \log_2 S$, we have that any $(\epsilon,1/2)$-correct algorithm on an enviroment with $S$ states, $A$ actions and horizon $H$ requires $\gtrsim S^2 A H^2/\epsilon^2$ samples. This is true even if $\Alg$ can return randomized or history-dependent (improper) policies. 
+\end{theorem}
+
+
+\subsection{Learning Transitions at $1$ State}
+
+The key core of the lower bound is to embed $n = \Omega(S)$  ``hard'' instances of learning a reward-free MPD into a single instance. For parameter $n$, $A$ actions and horizon $H = 2$, define the hard environment $\Ehard = (\calX,A,2)$ with $\calX = \{0,\dots,2n+1\}$. For $\epsilon > 0$, define the classes $\Phard(\epsilon)$ and $\Rhard$ as follows:
+\begin{align*}
+\Phard(\epsilon) &:=  \Big{\{}\calP: \calP[x_1 = 0] = 1, \,\calP[x' = 0 \mid x = 0, a] = 0 , \\
+&\qquad \,\left|\calP[x' = s \mid x = 0, a] - \frac{1}{2n}\right| \le \frac{\epsilon}{2n},\,\calP[x' = s \mid x = s, a] = 1, \, \forall a \in [A], s \in[2n]\Big{\}}.\\
+\Rhard &:=  \left\{r_{\nu}:\, r_{\nu}(0,\cdot) = 0,\, r_{\nu}(x,\cdot) = \nu[x], \quad \nu \in [0,1]^{2n}\right\}.
+\end{align*}
+In other words, $\calP \in \Phard(\epsilon)$ begins at state $x_1 = 0$, transitions to a state $x_2 \in [2n]$ with near uniform probability, and remains. Observe that $\Phard(\epsilon') \subseteq \Phard(\epsilon)$ for $\epsilon' \le \epsilon$. Moreover, $r_{\nu} \in \Rhard$ assigns a state-dependent, but \emph{action-independent} reward to the states in the environment.  We shall show the following:
+\begin{prop}\label{prop:single_instance} Fix $\epsilon \le 1/2$, $\delta \le 1/12$, and suppose that $n \ge \min\{n_0, c_0 \log A\}$ for universal constants $n_0,c_0$. Then there exists a distribution $\calD$ over instances $\calP \in \Phard(\epsilon)$ such that, for any $\Alg$ which $(\epsilon,\delta)$ learn $(\Ehard,\Phard(\epsilon),\Rhard)$, we must have
+\begin{align*}
+\Exp_{\calP \sim \calD}\,\Exp^{\calP}[K] \gtrsim \frac{nA}{\epsilon^2}\,.
+\end{align*}
+\end{prop}
+The above establishes only an $\Omega(SA/\epsilon^2)$ lower bound. However, because the dynamics at the states $x \in [2n]$ are known to the learner, the lower bound precisesly lower bounds the samples collected from state $x = 0$. In the next section, we prove Theorem~\ref{thm:main_lb} by embedding $n$ copies of the above instance into a single MDP.
+
+\subsection{Learning Transitions at $n$ states: Proof of Theorem~\ref{thm:main_lb}}
+
+
+For simplicitly, suppose that $\lnot:= \log_2 n$ is integral, and define the layered state space:
+\begin{align*}
+\calX := \left\{(y,\ell): y \in [2^{\ell- 1}], \,\ell \in \{1,\dots,\lnot+2\} \right\} 
+\end{align*}
+
+We can bound the cardinality of the state space as follows:
+\begin{align*}
+|\calX| \le 1 + 2+ \dots + n/2 + n +  2n \le 4n.
+\end{align*}
+
+\paragraph{Description of Transition Class }
+Let us define the class $\Pembed$. 
+First, we require that the states $(y,\ell)$ for $\ell \in [\lnot]$ form a dyadic tree, whose transitions are all known to the learner. That is, for $\calP \in \Pembed$,
+\begin{align*}
+&\calP[x_1 = (1,1)] = 1\\
+&\calP[x' = (y,\ell+1) \mid x = (y,\ell), a = 1] = 1, \quad \ell \in [ \lnot ]\\
+&\calP[x' = (2^{\ell} + y,\ell- 1) \mid x = (y,\ell), a] = 1, \quad \ell \in [\lmax - 1], \,a > 1.
+\end{align*}
+In words, $\calP$ starts at $(1,1)$, moves leftward with action $a = 1$, and rightward with actions $a > 1$. 
+
+At each $(y,\lnot+1)$, the learn learner faces transitions described by some $\calP^{(y)}(\epsilon_0) \in \Phard$ for $\epsilon_0= 1/8H$: specifically, we stipulate that states $(y,\lnot+1)$ always transition to states $(y',\lnot+2)$, which are absorbing:
+\begin{align*}
+&\forall P \in \Pembed, y \in [n], \text{ there exists a } \calP^{(y)} \in \Phard(\epsilon_0) \text{ such that }:\\
+&\calP[x' = (y',\lnot+2) \mid x = (y,\lnot+1), a] = \calP^{(y)}[x' = y' \mid x = 0, a], \,\,\,\forall a \in [A], \,y' \in [2n].\\
+&\calP[x' = (y',\lnot+2) \mid x = (y',\lnot+2), a] =1, \,\,\, \forall a \in [A]
+\end{align*}
+Observe that, for a fixed parameter $\rho$, there is a one-to-one correspondence between instances $\calP \in \Pembed$ and tuples $(\calP^{(1)},\dots,\calP^{(n)}) \in \Phard^n$. We shall therefore establish the following lemma:
+\begin{lemma}\label{lem:separate_lemma} There exists a universal constant $c$ for which the following holds. Suppose that $H \ge 2(\lnot + 1)$.  Suppose that $\Alg$ $(\epsilon,\delta)$-learns $(\Eembed,\Pembed,\Rembed)$ for an appropriate reward class $\Rembed$ and $\epsilon \le 1/4$. Then the trajectories collected by $\Alg$ can be used to $(\frac{4\epsilon}{H},\delta)$-learn $n$ separate instances of $(\Ehard,\Phard,\Rhard)$.
+\end{lemma}
+
+\maxs{proof basically done from this}
+
+\paragraph{Description of Reward Class}
+Define the reward class $\Rembed = \{r_{y,\nu}\}$ considering for action-independent rewards
+\begin{align*}
+r_{y,\nu}(x,a) = \begin{cases} 0 & x = (y',\ell),\, \ell \in [\lnot], \, y' \in [2^{\ell - 1}]\\
+0 & x = (y',\lnot + 1) \text{ and } y' \ne y\\
+1 & x = (y,\lnot + 1)  \\
+r_{\nu}[y'] & x = (y',\lnot + 2).
+\end{cases}
+\end{align*}
+In other words, the learner recieves reward $1$ at state $(y,\lnot+1)$, rewards $r_{\nu}$ at terminal states $(y',\lnot + 2)$, and $0$ elsewhere. We now establish that any policy which is $\epsilon$-optimal under reward $r_{y,\nu}$ must visit $(y,\lmax)$ with sufficiently high probability:
+\newcommand{\nubar}{\overline{\nu}}
+\begin{lemma}\label{lem:visit_y} Consider any optimal deterministic policy 
+$r_{y,\nu} \in \Rembed$ and $\calP \in \Pembed$. Then any $\epsilon \le 1/4$-suboptimal policy must must visit the state $(y,\lmax)$ with probability at least $1/2$.
+\end{lemma}
+\begin{proof}
+Let $\nubar := \frac{1}{2n}\sum_{y'=1}^{2n}\nu[y']$. Then, since each transition from $(y',\lnot+1)$ to $(y'',\lnot+2)$ is $\epsilon_0/2n$-away from uniform in $\ell_{\infty}$, and the states $(y'',\lnot+2)$ are absorbing for the remaining $H - \lnot - 1 \le H$ time steps, the reward of any policy $\pi$ on $\calM = \mdp(\calP,r_{y,\mu})$ is bounded as
+\begin{multline*}
+(H - \lnot - 1) (\nubar - \epsilon_0) + \Pr^{\pi}[x_{\lnot+1} =  (y,\lnot + 1)] \le V^{\calM,\pi} 
+\le  \Pr^{\pi}[x_{\lnot+1} =  (y,\lnot + 1)] + (H - \lnot - 1) (\nubar - \epsilon_0),
+\end{multline*}
+where we know that for the transitions $\calP \in \Pembed(\epsilon)$, $\Pr^{\pi}[x_{\lnot+1} =  (y,\lnot + 1)]$ depends only in the randomness in the policy. Since there exists a  policy which visits $(y,\lnot+1)$ with probability one, we can bound
+\begin{align*}
+ \max_{\pi'} V^{\calM,\pi} - V^{\calM,\pi} &\ge 1 - \Pr^{\pi}[x_{\lnot+1} =  (y,\lnot + 1)] - 2\frac{\epsilon_0}{H} (H - \lnot - 1)\\
+ &\ge 1- \Pr^{\pi}[x_{\lnot+1} = (y,\lnot + 1)] - 2H\epsilon_0
+\end{align*}
+Hence, for $\epsilon_0 = 1/8H$, any policy which is $\epsilon \le 1/4$ suboptimal must have $\Pr^{\pi}[x_{\lnot+1} = (y,\lnot + 1)] \ge 1/2$.
+\end{proof}
+
+\paragraph{Proof of Embedding, Lemma~\ref{lem:separate_lemma}} Suppose $H \ge 2\lmax$. We shall exhibit a map $\Psi$, independent of $\calP \in \Pembed$ or $r_{y,\nu} \in \Rembed$,  which maps policies $\pi$ on $\Eembed$  to tuples of policies $(\pi^{(1)},\dots,\pi^{(n)})$ on $\Ehard$ with the following property for a universal constant $c > 0$: 
+\begin{quote} 
+Let $\calP \in \Pembed$ correspond to the tuple $(\calP^{(1)},\dots,\calP^{(n)}) \in \Phard^n$, and let $y \in [n]$. Then, if $\pi$ is $\epsilon$-suboptimal for $\mdp(\calP,r_{y,\nu})$, the associated policy $\pi^{(y)}$ is $4\epsilon/H$ suboptimal for $\calM^{(y)} = \mdp(\calP^{(y)},r_{\nu})$. 
+\end{quote}
+
+A mapping with such a property suffices to prove Lemma~\ref{lem:separate_lemma}. Indeed, given $n$ separate instances $(\calP^{(1)},\dots,\calP^{(n)}) \in \Phard^n$, the learner can embed these into the corresponding $\calP \in \Pembed$, and collect the $K$ trajectories via an algorithm $\Alg$. Then, when queried for an $\epsilon/cH$ suboptimal policy for reward vector $r_{\nu}$ on transition $\calP^{(y)}$, the learner queries $\Alg$ for an $\epsilon$-suboptimal policy $\pi$ with reward vector $r_{y,\nu}$ on $\calP$, and returns $\pi^{(y)}$ from the correspondence $\Psi$.
+
+To conclude, let's construct the correspondence $\Psi$. Let $\calM = \mdp(\calP,r_{y,\nu})$.
+Observe that each policy $\pi^{(y)}$ on the MDPs $\calM^{(y)} = \mdp(\calP^{(y)},r_{\nu})$ can be described simply by a distribution over actions $a \in [A]$, which the first state is always $x = 0$, and remaining states are absorbing. Identifying policies as elements of $\Delta(A)$, we set
+\begin{align*}
+\pi^{(y)}[a] :=  \begin{cases} \Pr^{\pi}[ a_{\lnot + 1} = a \mid x_{\lnot + 1} = (y,\lnot + 1)] & \Pr^{\pi}[x_{\lnot + 1} = (y,\lnot + 1)] > 0  \\
+\text{arbitrary} & \text{otherwise}
+\end{cases}
+\end{align*}
+as the marginal distribution of actions selected when $x_{\lnot+1} = (y,\lnot + 1)$. Observe that the the above conditional probabilites \emph{do not} depend on $\calP \in \Pembed(\epsilon_0)$ since the dynamics up to $h = \lnot + 1$ are identical for all instances. By considing a policy which coincides with $\pi$ until $x_{\lnot + 1} = (y,\lnot + 1)$ and swtiches to playing optimally, we can bound
+\begin{align*}
+\max_{\pi'} V^{\calM,\pi'}- V^{\calM,\pi} \ge \Pr^{\pi}[x_{\lnot + 1} = (y,\lnot + 1)] (H - \lnot -1)\left(\max_{\pi'}V^{\calM^{(y)},\pi'}- V^{\calM^{(y)},\pi^{(y)}}\right),
+\end{align*}
+where we note that the value obtained by a policy $\pi$ reaching $x_{\lnot + 1} = (y,\lnot + 1)$ is just the value of $\pi^{(y)}$ on the MDP $\calM^{(y)}$. In particulr, suppose $\pi$ is $\epsilon \le 1/4$-suboptimal. Then  Lemma~\ref{lem:visit_y} ensures $\Pr^{\pi}[x_{\lnot + 1} = (y,\lnot + 1)] \ge 1/2$. Since $H \ge 2(\lnot+1)$ by assumption, we have
+\begin{align*}
+\epsilon \ge \max_{\pi'} V^{\calM,\pi'}- V^{\calM,\pi} \ge \frac{H}{4}\left(\max_{\pi'}V^{\calM^{(y)},\pi'}- V^{\calM^{(y)},\pi^{(y)}}\right),
+\end{align*}
+Therefore, $\pi^{(y)}$ is $\frac{4\epsilon}{H}$-suboptimal for $\calM^{(y)}$. \qed
+\subsection{Proof of Proposition~\ref{prop:single_instance}}
+\paragraph{Instance Class: }
+
+%As a warmup, let us consider a lower bound on the problem of exploration in an environment  with  horizon $H = 2$,  $A$ actions, and $2n + 1$ states, $s = \{0,1,\dots,2n\}$. We will consider a family of MDP's with begin at state $x = 0$, and transition to a state $x \in [2n]$ state according to some probability distribution. Our aim will to be to show that, for this restricted family, $K = \Omega(SA/\epsilon^2)$ trajectories must be collected in order learn in $(\epsilon,\delta)$ environment for a small constant $\delta$. We will then show how to embed $S$ such instances in a larger MDP, obtain an $\Omega(S^2A/\epsilon^2)$ lower bound. 
+
+
+Fix a cardinality parameter $M \ge 1$ to be chosen later. We let $\{q_{a,j}: a \in [A], j \in [M]\}_{a } \subset \Delta([2n])$ denote a collection of transition probabilities. For an index tuple $J = (j_1,\dots,j_A) \in [M]^A$, we define the reward-free MDP $\calP_J$ via
+\begin{align*}
+\calP_J : \quad \Pr^{\calP_J}[x_1 = 0] = 1,\,\Pr^{\calP_J}[x_2 = 0] = 0,\,\, \forall s \in [2n],\, \Pr^{\calP_J}[x_2 = s \mid x_1 = 0, a] = q_{a,J_a}[s]
+\end{align*}
+Given a vector $\nu \in [0,1]^{2n}$, we define the MDP 
+\begin{align*}
+\calM_{J,\nu} := \mdp(\calP_J, r_{\nu}),\quad \text{ where}\, r_{\nu}(s,a) := \begin{cases} \nu[s] & s \in [2n]\\
+0 & s= 0\\
+\end{cases}
+\end{align*}
+
+
+\subsubsection{Proof Overview}
+Let $\vecone$ denote the all ones vector on $[2n]$. To construct the packing, we define the set of binary vectors
+\begin{align*}
+\calK := \left\{v \in \{-1,1\}^{2n}~: \vecone^\top v = 0\right\}
+\end{align*}
+For our $\epsilon \in (0,1]$ as in the statement of the bound, we consider $q_{a,j}$ of the form
+\begin{align*}
+q_{a,j} := q_0 + \frac{\epsilon}{S}v_{a,j}, \quad \text{where } v_{a,j} \unifsim \calK,\,\, q_0 := \frac{\vecone}{S}
+\end{align*}
+We can immediately check that $q_{a,j} \in \Delta([2n])$ for our choice of $\epsilon \le 1$, so that the construction is valid. 
+
+
+To begin, let us suppose we have an exploration algorithm $\Algest$ which, for any $\calP_J$, collects (a possibly random number) $K$ trajectories, and returns estimates $\Jhat_1,\dots,\Jhat_A$ of $J_1,\dots,J_A$. Our first step is to establish a lower bound on $K$ assuming that $\Algest$ satisfies a uniform correctness guarantee: 
+\begin{prop}\label{prop:lb_fano_algest} For any $\Algest$ satisfying the guarantee
+\begin{align}
+\forall J \in [A]^M,\,\, \Pr^{\calP_J,\Algest}\left[\Jhat_a = J_a\,\forall a \in [A]\right] \ge 1 - \delta. \label{eq:algest_guarantee}
+\end{align}
+Then, we must have 
+\begin{align*}
+\Exp_{J \unifsim [A]^M} \Exp^{\calP_J,\Algest}[K] \ge A \cdot \frac{(1 - \delta)\log M - \log 2}{\epsilon^2}
+\end{align*}
+\end{prop}
+The above bound essentially follows from an application of Fano's inequality. In particular, if we take say $\delta = 1/2$, and require $M = e^{\Omega(S)}$, then we have 
+\begin{align*}
+\Exp_{J \unifsim [A]^M} \Exp^{\calP_J,\Algest}[K] \gtrsim \frac{SA}{\epsilon^2},
+\end{align*}
+as desired. Of course, the above bound applies only to an estimation algorithm $\Algest$, but our intent is to establish lower bounds for exploration algorithms. We shall therefore show that, if our packing has a certain structure, we can convert an $(\epsilon/12,\delta)$-correct exploration algorithm into an Algorithm $\Algest$ satisfying Eq.~\eqref{eq:algest_guarantee}:
+\begin{definition} For $\gamma \in (0,1)$, we say the packing is $\gamma$-uncorrelated if, for any pair $(a,j),(a',j')$ with \emph{either} $a \ne a'$ or $j \ne j'$, it holds that
+\begin{align*}
+|\langle v_{a,j}, v_{a',j'} \rangle| < 2n \gamma 
+\end{align*}
+\end{definition}
+We can now state a reduction from estimation (in the sense of Eq.~\ref{eq:algest_guarantee}) to $ (\epsilon/12,\delta)$-exploration:
+\begin{lemma}\label{lem:estimation_reduce_exploration} Suppose $\Alg$ can $(\epsilon/12,\delta)$-explore instances of the form $\calP_J$ with rewards $r_{\nu}$, and that the packing is $\gamma = 1/10$-uncorrelated. Then, there is an algorithm $\Algest$ which collects $K$ trajectories according to $\Alg$, and satisfies Eq.~\ref{eq:algest_guarantee}.
+\end{lemma}
+\begin{proof}[Proof Sketch] Consider reward vectors $r_{\nu}$ induced by $\nu_{a,j,a_2,j_2} \propto 2q_{a,j} - q_{a_2,j_2}$. These reward vectors can be used to ``pick out'' $q_{a,J_a}$ as follows.
+For a given $a$, we show that on the good exploration event, $\Alg$ returns policies with $\Pr[\pihat_1^{\nu}(0) = a] > 1/2$ for all $\nu = \nu_{a,J_a,a_2,j_2}$ ranging across $a_2,j_2$. However, for $j \ne J_a$, we show that on this good event there exists some $a_2,j_2$ for which $\Alg$ returns policies with $\Pr[\pihat_1^{\nu}(0)  = a] < 1/2$. Hence, we can estimate $q_{a,J_a}$ by finding the (say, the first) index $j$ for which $\Pr[\pihat_1^{\nu}(0) = a] > 1/2$ for all $\nu = \nu_{a,j,a_2,j_2}$, ranging across $a_2,j_2$. 
+\end{proof}
+As a consequence, we find that if $\Alg$ $(\epsilon/12,\delta)$ explores $\Envir$,
+\begin{align*}
+\Exp_{J \unifsim [A]^M} \Exp^{\calP_J,\Alg}[K] \ge A \cdot \frac{(1 - \delta)\log M - \log 2}{\epsilon^2}.
+\end{align*}
+Our last step is to exhibit a packing for which $M = e^{\Omega(S)}$ which satifies the $\gamma = 1/10$-uncorrelated property. We use the probabilistic method. To begin, let us prove that $\langle v_{a,j},v_{a',j'}\rangle$ exhibits exponential concentration around zero:
+\begin{lemma}\label{lem:v_concentration} For any fixed $(a,j)$ and $(a',j')$, we have
+\begin{align*}
+\Pr[|\langle v_{a,j} , v_{a',j'}\rangle| \ge 2n\gamma] \le e^{ \log (4n) - n\gamma^2}.
+\end{align*}
+\end{lemma}
+The proof is deferred to Section~\ref{sssec:lem:v_concentration}. By a union bound over at most $A^2M^2 - 1$ pairs $(a,j),(a',j')$, there exists a $\gamma$-uncorrelated packing for any $M$ satisfying
+\begin{align*}
+A^2M^2e^{ \log (4n) - n\gamma^2} \le 1
+\end{align*}
+Taking logarithms, we require $2\log(M) \le n\gamma^2 - \log(4n) - 2\log(A)$.
+
+
+\subsubsection{Proof of Proposition~\ref{prop:lb_fano_algest}}
+
+
+To begin, let us state a variant of Fano's inequality, which replaces mutual-information with an arbitrary comparison measure:
+\begin{lemma}[ Fano's Inequality ] Consider $M$ probability measures $\Pr_{1},\dots,\Pr_{M}$ on a space $\Omega$. Then for any estimator $\jhat$ on $\Omega$ and any comparison law $\Pr_0$ on $\Omega$, 
+\begin{align*}
+\frac{1}{M}\sum_{j=1}^M \Pr_{j}\left[\jhat \ne j\right] \ge 1 - \frac{\log 2 + \frac{1}{M}\sum_{j=1}^M\KL(\Pr_j,\Pr_0) }{\log M}
+\end{align*}
+\end{lemma}
+\begin{proof} This follows from the standard statement of Fano's inequality, where we use that 
+\begin{align*}
+\inf_{\Pr_0}\frac{1}{M}\sum_{j=1}^M\KL(\Pr_j,\Pr_0) =  \frac{1}{M}\sum_{j=1}^M\KL\left(\Pr_j,\frac{1}{M}\sum_{j'=1}^M\Pr_{j'}\right) 
+\end{align*}
+(see, e.g. [Xi Chen])
+\end{proof}
+We will apply Fano's inequality of each $a \in [A]$. To begin, for a fixed $J \in [M]^A$ and $a \in [A]$, let us define the laws ``$\Pr_{j}$''. We let $\calP_{J,a,j}$ denote the reward-free MDP with starting at $x = 0$ deterministically, and with transitions
+\begin{align*}
+\Pr^{\calP_{J,a,j}}[s \mid x_1 = 0,a_1 = a'] = \begin{cases} q_{a,j}[s] & a' = a\\
+q_{a',J_{a'}}[s] & a' \ne a.
+\end{cases}
+\end{align*}
+For fixed $J,a$, we let $\Pr_{j;J,a}$ denote the joint law induced by $\Algest$ and $\calP_{J,a,j}$. For the comparison measure, let $\calP_{J,a,0}$ denote the analogous MDP to $\Pr_{J,a,j}$, but where $\Pr^{\calP_{J,a,j}}[s \mid x_1 = 0,a_1 = a] = q_{0}$ for the fixed action $a$. We let $\Pr_{0;J,a}$ denote the law induced by $\Algest$ and $\calP_{J,a,j}$. Then, Fano's iqequality implies that 
+\begin{align}\label{eq:Fano_conclusion}
+\forall J,a, \quad (1 - \delta)\log M - \log 2 \le  \frac{1}{M}\sum_{j=1}^M \KL(\Pr_{J,a,j},\Pr_{0;J,a}). 
+\end{align}
+Now, observe that the laws $\Pr_{J,a,j}$ and $\Pr_{0;J,a}$ only differ due to transitions selecting action $a_1 = a$. Under the first law, these have distribution $\mathrm{Multinomial}(q_{a,j})$, and under the second, $\mathrm{Multinomial}(q_{0})$.  From a Wald's identity argument [cite Kaufman], we have
+\begin{align*}
+\KL(\Pr_{J,a,j},\Pr_{0;J,a}) &= \Exp^{\calP_{J,a,j},\Algest}[N_K(a_1 = a)] \,\KL(\mathrm{Multinomial}(q_{a,j}),\mathrm{Multinomial}(q_{a,0} ))\\
+&= \Exp^{\calP_{J,a,j},\Algest}[N_K(a_1 = a)] \,\sum_{s=1}^{2n} \frac{1 + \epsilon v_{j,a}[s]}{2n}\log(1 + \epsilon v_{j,a}[s])\\
+&\overset{(i)}{\le} \Exp^{\calP_{J,a,j},\Algest}[N_K(a_1 = a)] \,\sum_{s=1}^{2n} \frac{\epsilon v_{j,a} + \epsilon^2 v_{j,a}[s]^2}{2n}\\
+&\overset{(ii)}{\le} \epsilon^2 \cdot \Exp^{\calP{J,a,j},\Algest}[N_K(a_1 = a)] 
+\end{align*}
+where $(i)$ uses $1 + \epsilon v_{j,a}[s] \ge 0$ and the identity $\log (1+ x) \le x$, and $(ii)$ uses the fact that $v_{j,a}[s]^2 = 1$ and $\sum_{s = 1}^{2n} v_{j,a}[s] = 0$ for $v_{j,a} \in \calK$.  Thus, by Eq~\ref{eq:Fano_conclusion},
+\begin{align}\label{eq:Fano_conclusion}
+\forall J,a, \quad \frac{(1 - \delta)\log M - \log 2}{\epsilon^2} \le  \frac{1}{M}\sum_{j=1}^M \Exp^{\calP_{J,a,j},\Algest}[N_K(a_1 = a)] 
+\end{align}
+By taking an expectation over index tuples $J$ drawn uniformly from $[A]^M$, we have 
+\begin{align}\label{eq:Fano_conclusion}
+\forall a, \quad \frac{(1 - \delta)\log M - \log 2}{\epsilon^2} &\le  \frac{1}{M}\sum_{j=1}^M \Exp_{J \unifsim [A]^{M}}\Exp^{\calP_{J,a,j},\Algest}\left[N_K(a_1 = a)\right]  \\
+&= \Exp_{J \unifsim [A]^{M}}\Exp^{\calP_J,\Algest}\left[N_K(a_1 = a)\right],
+\end{align}
+where the last line follows that $\calP_{J,a,j} = \calP_{J'}$ for some $J'$ and that, by symmetry, each index $J'$ has equal weight when averaged over both $J \in [A]^M$ and $j \in [M]$.
+
+Summing over $a \in [A]$, we have
+\begin{align*}
+A \cdot \frac{(1 - \delta)\log M - \log 2}{\epsilon^2} \le \Exp_{J \unifsim [A]^{M}}\Exp^{\calP_J,\Algest}\left[\sum_{a=1}^A N_K(a_1 = a)\right] = \Exp_{J \unifsim [A]^{M}}\Exp^{\calP_J,\Algest}[K].
+\end{align*}
+
+\subsubsection{Proof of Lemma~\ref{lem:estimation_reduce_exploration}}
+Let us now show that $(\epsilon/12,\delta)$-learning implies the existence of an algorithm $\Algest$ satisfying Eq.~\ref{eq:algest_guarantee}, provided the packing is sufficiently uncorrelated.
+
+Introduce the vectors 
+\begin{align*}
+\nu_{a_1,a_2,j_1,j_2} := \frac{1}{3}v_{a_1,j_1} + \frac{1}{6}v_{a_2,j_2} + \frac{1}{2}\vecone,
+\end{align*}
+which can be checked to lie $[0,1]^S$. We shall establish the following lemma, which says that for sufficciently uncorrelated packings, the vectors $\nu_{(\dots)}$ witness separations between $q_{a_1,j_1}$ and $q_{a_2,j_2}$ for different actions $a_1,a_2$:
+\begin{lemma}\label{lemma:inner_product_lem} Fix $a_1 \in [A]$ and $j_1 \in [M]$, and suppose the packing is $\gamma = 1/10$-uncorrelated: Then, for any $a_2 \ne a_1$ and $j_2 \in [M]$, the following holds
+\begin{align*}
+&\min_{a_2',j_2'}\langle q_{a_1,j_1} - q_{a_2,j_2}, \nu_{a_1,a_2',j_1,j_2'} \rangle >  \frac{\epsilon}{12}\\
+\forall j_1' \ne j_1,\,\, & \min_{a_2',j_2'}\langle q_{a_1,j_1} - q_{a_2,j_2}, \nu_{a_1,a_2',j_1',j_2'} \rangle <  - \frac{\epsilon}{12}
+\end{align*}
+\end{lemma}
+The above lemma is a routine computation, which we carry out shortly. Let us establish first establish the more conceptually interesting point that the above lemma implies Lemma~\ref{lem:estimation_reduce_exploration}:
+
+\begin{proof} Suppose that $\Alg$ is run on $\calP_J$ for $J \in [M]^A$. Then with probability $1-\delta$, $\Alg$ can compute a policies $\pihat^{\nu}$ which satisfy for all $\nu \in [0,1]^{2n}$, 
+\begin{align}
+\max_{\pi} V^{\calM_{J,\nu}, \pi} - V^{\calM_{J,\nu},\pihat^{\nu}} \le \epsilon/24. \label{eq:good_event_lb}
+\end{align}
+Consider the following procedure: for each $a \in [A]$, estimate $J_a$ by returning the first $j \in [M]$ for which
+\begin{align}
+\forall a_2',j_2', \quad \Pr[\pihat_1^{\nu_{a,a_2',j,j_2'}} = a ] > 1/2.\label{eq:id_condition}
+\end{align}
+We conclude our proof by showering that, on the good event Eq.~\eqref{eq:good_event_lb}, the condition in Eq.~\eqref{eq:id_condition} holds if and only if $j = J_a$.
+
+
+For a randomized policy $\pihat$, abuse notation slightly and write 
+\begin{align*}
+q_{\pihat} := \sum_{a'} \Pr[\pihat_1(0)= a']q_{a',j_{a'}}
+\end{align*}
+Then, for the instances under consideration consideration (and under the above good event), we have
+\begin{align*}
+\epsilon/24 \overset{\text{(Eq.~\ref{eq:good_event_lb})}}{\ge} \max_{\pi} V^{\calM_{J,\nu}, \pi} - V^{\calM_{J,\nu},\pihat_{\nu}} &= \max_{\pi}\left\langle q_{\pi} - q_{\pihat^{\nu}} , \,\nu\right\rangle\\
+&= \max_{a'}\left\langle q_{a',J_{a'}} - q_{\pihat^{\nu}} , \,\nu\right\rangle.
+\end{align*} 
+First let's show that Equation~\ref{eq:id_condition} holds for $j = J_a$. Indeed, if it does not, then there exists some $a_2',j_2'$ for which $\Pr[\pihat_1^{\nu_{a,j,a_2',j_2'}}(0) \ne a] \ge 1/2$, and (setting $\nu = \nu_{a,j,a_2',j_2'}$ for shorthand in $\pihat^{\nu}$)
+\begin{align*}
+\epsilon/24 &\ge \max_{a'}\left\langle q_{a',J_{a'}} - q_{\pihat^{\nu}} , \,\nu_{a,j,a_2',j_2'}\right\rangle\\
+&\ge \left\langle q_{a,J_{a}} - q_{\pihat^{\nu}} , \,\nu_{a,j,a_2',j_2'}\right\rangle\\
+&= \sum_{a' \ne a}\Pr[\pihat^{\nu}_1(0) = a'] \left\langle q_{a,J_{a}} - q_{a',J_{a'}} , \,\nu_{a,j,a_2',j_2'}\right\rangle\\
+&\ge\underbrace{\Pr[\pihat^{\nu}_1(0) \ne a]}_{\ge 1/2} \cdot \underbrace{\min_{a' \ne a}\left\langle q_{a,J_{a}} - q_{a',J_{a'}} , \,\nu_{a,j,a_2',j_2'}\right\rangle}_{> \epsilon/12 \text{ by Lemma~\ref{lemma:inner_product_lem} }} > \frac{\epsilon}{24},
+\end{align*}
+yielding a contradiction. 
+
+On the other hand, for $j \ne J_{a}$ suppose that for all all $a_2' \ne a$ and all $j_2' \in [M]$,  $\Pr[\pihat_1^{\nu_{a,j,a_2',j_2'}}(0) = a] > 1/2$. Then, considering $a_2' = a_2$ and $j_2' = J_{a_2}$, we have  (setting $\nu = \nu_{a,j,a_2,J_{a_2}}$ for shorthand in $\pihat^{\nu}$)
+\begin{align*}
+\epsilon/24 &\ge  \max_{a'}\left\langle q_{a',J_{a'}} - q_{\pihat^{\nu}} , \,\nu_{a,j,a_2,J_2}\right\rangle\\
+&\ge  \left\langle q_{a_2,J_{a_2}} - q_{\pihat^{\nu}} , \,\nu_{a,j,a_2,J_2}\right\rangle\\
+&\ge  \underbrace{\Pr[\pihat^{\nu}_1(0) \ne a_2]}_{\ge \Pr[\pihat^{\nu}_1(0) = a] > 1/2} \cdot\underbrace{\min_{a' \ne a_2}\left\langle q_{a_2,J_{a_2}} - q_{a',J_{a'}} , \,\nu_{a,j,a_2',j_2'}\right\rangle}_{> \epsilon/12 \text{ by Lemma~\ref{lemma:inner_product_lem} }} > \frac{\epsilon}{24},
+\end{align*}
+again drawing a contradiction.
+\end{proof}
+\begin{proof}[Proof of Lemma~\ref{lemma:inner_product_lem}]
+\begin{align*}
+\langle q_{a_1,j_1} - q_{a_2,j_2}, \nu_{a_1',a_2',j_1',j_2'} \rangle &= \frac{\epsilon}{6S} \langle v_{a_1,j_1} - v_{a_2,j_2}, \nu_{a_1',a_2',j_1',j_2'}\rangle\\
+&= \frac{\epsilon}{6S} \langle v_{a_1,j_1} - v_{a_2,j_2}, 2v_{a_1',j_1'} - v_{a_2',j_2'} \rangle,
+\end{align*}
+where we use the fact that $v_{a,j}^\top \vecone = 1$ for all $a,j$. If $a'_1 = a_1$ and $j_1' = j_1$, and the packing is $\gamma \le 1/6$-uncorrelated
+\begin{align*}
+\langle q_{a_1,j_1} - q_{a_2,j_2}, \nu_{a_1,a_2',j_1,j_2'} \rangle  &\ge \frac{\epsilon}{6S}\left( 2\langle v_{a_1,j_1},v_{a_1,j_1}\rangle  - 2\langle v_{a_2,j_2},v_{a_1,j_1}\rangle + \langle v_{a_1,j_1}, v_{a_2',j_2'} \rangle -  \langle v_{a_2,j_2}, v_{a_2',j_2'} \rangle\right)\\
+&> \frac{\epsilon}{6S}\left( 2S - 3\gamma S - \max\{\gamma S, S\}\right)\\
+&\ge \frac{\epsilon}{6S}\left( S - 3\gamma S \right) = \frac{\epsilon}{12}.
+\end{align*}
+On the other hand, if $j_1 \ne j_1'$, but $(a_2,j_2) = (a_2',j_2')$ then a similar computation reveals that for $\gamma \le 1/10$, 
+\begin{align*}
+\langle q_{a_1,j_1} - q_{a_2,j_2}, \nu_{a_1,a_2,j_1',j_2} \rangle < \frac{\epsilon}{6S}\left( 5\gamma S  - S\rangle\right) < \frac{-\epsilon}{12}. 
+\end{align*}
+\end{proof}
+
+
+\subsubsection{Proof of Lemma~\ref{lem:v_concentration}\label{sssec:lem:v_concentration}}
+\begin{proof} By permuting coordinates, we may assume that 
+\begin{align*}
+v_{a',j'}[s] = \begin{cases} 1 & s \in [n]\\
+-1 & s \in \{n+1,\dots,2n\}\end{cases}\,.
+\end{align*}
+Then,
+\begin{align*}
+\langle v_{a,j} , v_{a',j'}\rangle &= 2|\{s\in [n]: v_{a,j}[s] = 1\}| - 2(n - |\{s\in [n]: v_{a,j}[s] = 1\}|) \\
+&= 2n - 4|\{s\in [n]: v_{a,j}[s] = 1\}| := 2n - 4Z,
+\end{align*}
+where we set $Z = |\{s\in [n]: v_{a,j}[s] = 1\}|$. Hence, if $|\langle v_{a,j} , v_{a',j'}\rangle|  \ge 2\gamma n$, we need
+\begin{align*}
+\left|\frac{Z}{n} - \frac{1}{2}\right| \ge \frac{\gamma}{2}.
+\end{align*}
+Now, we have that for $i \in [n]$,
+\begin{align*}
+\Pr[Z = i] < \frac{\binom{n}{i} \cdot \binom{n}{n-i}}{\sum_{i=0}^n \binom{n}{i} \cdot \binom{n}{n-i}} = \frac{\binom{n}{i}^2}{\sum_{i=0}^n \binom{n}{i}^2} < n\frac{\binom{n}{i}^2}{\left(\sum_{i=0}^n \binom{n}{i}\right)^2} = n\Pr_{W \sim \mathrm{Binom}(n,1/2)}[W=i]^2.
+\end{align*}
+Hence, 
+\begin{align*}
+\Pr\left[\left|\frac{Z}{n} - \frac{1}{2}\right| \ge \frac{\gamma}{2}\right] &\le n\sum_{i:|\frac{i}{n} - \frac{1}{2}| \ge \frac{\gamma}{2}} \Pr_{W \sim \mathrm{Binom}(n,1/2)}[W=i]^2\\
+&\le n\left(\sum_{i:|\frac{i}{n} - \frac{1}{2}| \ge \frac{\gamma}{2}} \Pr_{W \sim \mathrm{Binom}(n,1/2)}[W=i]\right)^2\\
+&= n\left(\Pr_{W \sim \mathrm{Binom}(n,1/2)}\left[\left|\frac{W}{n} - \frac{1}{2}\right| \ge \frac{\gamma}{2}\right]\right)^2 
+&\le n(2e^{- 2(\gamma/2)^2 n})^2 = e^{ \log (4n) - n\gamma^2}
+\end{align*}
+\end{proof}
+
+

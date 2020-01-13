@@ -1,0 +1,23 @@
+%!TEX root = main.tex
+
+
+\newcommand{\nkh}{N_{k;h}}
+\newcommand{\ktwo}{_{k;2}}
+\newcommand{\vsttwo}{\vst_{;2}}
+
+
+\section{Two Stages}
+
+For simplicity, let us use different samples to estimate each state. 
+
+
+\begin{align*}
+   |\rhat\kh - r\xa| \le \sqrt{\frac{\Lfactor}{\nkh\xa}}
+\end{align*}
+
+Let $V\kh = V^{\pi\kh}_{;h}$. 
+\begin{align*}
+   \phat\kone\xa^\top \vup\ktwo - p(x,a)^\top \vsttwo  &=    (\phat\kone - p)\xa^\top \vsttwo \\
+   &\qquad+ (\phat\kone - p)\xa^\top(\vup\ktwo - \vsttwo)
+\end{align*}
+

@@ -1,0 +1,158 @@
+%!TEX root = main.tex
+\usepackage{xcolor}
+
+\newcommand{\vpt}{\vspace{.1in}}
+\newcommand{\s}{\mathcal{S}}
+\newcommand{\one}{\mathbf{1}}
+\newcommand{\half}{\frac{1}{2}}
+\newcommand{\nhalf}{\nicefrac{1}{2}}
+\newcommand{\Tol}{\texttt{Tol}}
+\newcommand{\calA}{\mathcal{A}}
+\newcommand{\calX}{\mathcal{X}}
+\newcommand{\vx}{\mathbf{x}}
+\newcommand{\hvx}{\hat{\mathbf{x}}}
+\newcommand{\1}{\mathbbm{1}}
+
+\newcommand{\maxs}[1]{\noindent{\textcolor{blue}{\{{\bf MS:} \em #1\}}}}
+\newif\ifpx
+\DeclareOption{px}{\pxtrue}
+
+\ProcessOptions
+
+\ifpx
+  \let\iint\relax
+  \let\iiint\relax
+  \let\iiint\relax
+  \let\idotsint\relax
+  \usepackage[varg]{pxfonts}
+\fi
+% \DeclareOption{tx}{
+%   \let\iint\relax
+%   \let\iiint\relax
+%   \let\iiint\relax
+%   \let\idotsint\relax
+%   \usepackage[varg]{txfonts}
+% }
+
+% Math delimiters
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert} %
+\DeclarePairedDelimiter{\brk}{[}{]}
+\DeclarePairedDelimiter{\crl}{\{}{\}}
+\DeclarePairedDelimiter{\prn}{(}{)}
+\DeclarePairedDelimiter{\nrm}{\|}{\|}
+\DeclarePairedDelimiter{\tri}{\langle}{\rangle}
+\DeclarePairedDelimiter{\dtri}{\llangle}{\rrangle}
+
+\DeclarePairedDelimiter{\ceil}{\lceil}{\rceil}
+\DeclarePairedDelimiter{\floor}{\lfloor}{\rfloor}
+
+% \DeclareMathOperator{\E}{\mathbb{E}} %expecation
+\let\Pr\undefined
+\let\P\undefined
+\DeclareMathOperator*{\En}{\mathbb{E}}
+\DeclareMathOperator{\P}{P}
+\DeclareMathOperator{\Pr}{\mathbb{P}}
+
+% Arg<x>
+\DeclareMathOperator*{\argmin}{arg\,min} % * Places subscript directly under operator
+\DeclareMathOperator*{\argmax}{arg\,max}             
+\DeclareMathOperator*{\arginf}{arg\,inf} 
+\DeclareMathOperator*{\argsup}{arg\,sup} 
+
+% Sets
+ \newcommand{\R}{\mathbb{R}}
+ \newcommand{\N}{\mathbb{N}}
+% \newcommand{\Z}{\mathbb{Z}}
+% \newcommand{\Q}{\mathbb{Q}}
+% \newcommand{\J}{\mathbb{J}}
+% \newcommand{\C}{\mathbb{C}}
+
+\newcommand{\ind}{\mathbbm{1}}    %Indicator
+
+% \newcommand{\V}{\mathcal{V}}
+% \newcommand{\X}{\mathcal{X}}
+% \newcommand{\Y}{\mathcal{Y}}
+% \newcommand{\A}{\mathcal{A}}
+% \newcommand{\F}{\mathcal{F}}
+% \newcommand{\G}{\mathcal{G}}
+% \newcommand{\D}{\mathcal{D}}
+
+\newcommand{\eps}{\epsilon}
+%\newcommand{\defeq}{\overset{def}{=}}
+%\newcommand{\defeq}{\triangleq}
+\newcommand{\defeq}{\coloneqq}
+
+\newcommand{\xr}[1][n]{x_{1:#1}}
+\newcommand{\yr}[1][n]{y_{1:#1}}
+\newcommand{\zr}[1][n]{z_{1:#1}}
+
+\newcommand{\bigO}{\mathcal{O}}
+
+
+
+% misc stuff
+\newcommand{\fb}{{\bf{}f}}
+
+\newcommand{\mc}[1]{\mathcal{#1}}
+\newcommand{\reg}{\mc{R}}
+\newcommand{\breg}{D_{\reg}}
+
+\newcommand{\apx}{\emph{ApxReg}}
+
+%Thodoris' additions
+\newcommand{\cost}{\ensuremath{\mathit{cost}}}
+\newcommand{\opt}{\text{\textsc{Opt}} }
+\newcommand{\obj}{\text{\textsc{Obj}} }
+\newcommand{\val}{\text{\textsc{val}} }
+\newcommand{\sol}{\text{\textsc{sol}} }
+
+%{
+ %\theoremstyle{plain}
+ %     \newtheorem{asm}{Assumption}
+%}
+\newtheorem{nono-theorem}{Theorem}[]
+
+\theoremstyle{plain
+}
+\setlength{\topsep}{.1in} 
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{fact}[theorem]{Fact}
+%\theoremstyle{remark}
+%\newtheorem*{rem}{Remark}
+\newtheorem*{note}{Note}
+
+\newtheorem{prop}[theorem]{Proposition}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\newtheorem{conjecture}{Conjecture}[section]
+\newtheorem{example}{Example}[section]
+\newtheorem{exc}{Exercise}[section]
+\newtheorem{rem}{Remark}[section]
+\newtheorem{obs}{Observation}[section]
+
+
+\newenvironment{rtheorem}[3][]{
+
+\bigskip
+
+\noindent \ifthenelse{\equal{#1}{}}{\bf #2 #3}{\bf #2 #3 (#1)}
+\begin{it}
+}{\end{it}}
+
+
+\newcommand{\poly}{\mathrm{poly}}
+\newcommand{\regret}{\mathrm{regret}}
+\newcommand{\starhull}{\mathsf{star}}
+\newcommand{\cone}{\mathsf{cone}}
+\newcommand{\Exp}{\mathbf{E}}
+
+
+
+\newcommand{\nk}{N_k}
+\newcommand{\Lfactor}{\mathbf{L}}
+
+
+
